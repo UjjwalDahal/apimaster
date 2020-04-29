@@ -114,7 +114,6 @@ BootcampSchema.pre('save', function (next) {
 });
 
 // Geocode and create location field
-
 BootcampSchema.pre('save', async function (next) {
   const loc = await geocoder.geocode(this.address);
   this.location = {
@@ -130,6 +129,14 @@ BootcampSchema.pre('save', async function (next) {
 
   // do not save address in DB
   this.address = undefined;
+  next();
+});
+
+// Cascade delete courses when bootcamp is removed
+
+BootcampSchema.pre('remove', async function (next) {
+  console.log('Courses being removed from id');
+  await this.model('Course').deleteMany({ bootcamp: this._id });
   next();
 });
 
