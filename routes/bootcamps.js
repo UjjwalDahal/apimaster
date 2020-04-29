@@ -1,5 +1,11 @@
 const express = require('express');
+const courseRouter = require('./courses');
 const router = express.Router();
+
+// re-routing router on resource
+
+router.use('/:bootcampId/courses', courseRouter);
+
 const {
   getBootcamps,
   createBootcamp,
