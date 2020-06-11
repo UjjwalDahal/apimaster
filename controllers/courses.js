@@ -50,6 +50,7 @@ exports.getCourse = asyncHandler(async (req, res, next) => {
 // @access  Private
 
 exports.addCourse = asyncHandler(async (req, res, next) => {
+  req.body.user = req.user.id;
   req.body.bootcamp = req.params.bootcampId;
 
   const bootcamp = await Bootcamp.findById(req.params.bootcampId);
@@ -58,6 +59,14 @@ exports.addCourse = asyncHandler(async (req, res, next) => {
     return next(
       new ErrorResponse(`No course with the id of ${req.params.bootcampId}`),
       404
+    );
+  }
+
+  if (bootcamp.user.toString() !== req.user.id && req.user.role !== "admin") {
+    return next(
+      new ErrorResponse(
+        `User ${req.params.id} is not authorized to create this course`
+      )
     );
   }
 
